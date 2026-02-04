@@ -1,7 +1,7 @@
 ---
 name: customer-report
 description: Generate comprehensive customer performance reports with REACH/HIRE split analysis from Redshift data, outputting a professional PowerPoint presentation
-argument-hint: [account_name] [months]
+argument-hint: [account_name] [timeframe]
 disable-model-invocation: true
 allowed-tools: mcp__plugin_redshift-metadata-discovery_redshift__execute_query, Bash, Write, Read
 ---
@@ -13,18 +13,35 @@ Generate comprehensive customer performance reports with REACH/HIRE split analys
 ## Usage
 
 ```
-/customer-report [account_name] [months]
+/customer-report [account_name] [timeframe]
 ```
 
 **Parameters:**
 - `account_name` (required): The ultimate parent company name to analyze (e.g., "REWE", "Deutsche Bahn")
-- `months` (optional): Number of months to analyze (default: 12)
+- `timeframe` (optional): Flexible time period specification (default: 12 months)
+
+**Supported Timeframe Formats:**
+
+| Format | Example | Description |
+|--------|---------|-------------|
+| Number | `12` | Last N months |
+| Date range | `2024-06-01 2025-01-31` | Specific start and end dates |
+| Month range | `Jun2024 Jan2025` | Month-year to month-year |
+| YTD | `YTD` | Year to date (Jan 1 to today) |
+| Quarter | `Q1 2025` or `Q4 2024` | Specific quarter |
+| Half year | `H1 2025` or `H2 2024` | First or second half of year |
+| Last quarter | `last quarter` | Previous complete quarter |
+| Last year | `last year` | Previous 12 months |
 
 **Examples:**
 ```
 /customer-report REWE
 /customer-report "Deutsche Bahn" 6
-/customer-report Lidl 24
+/customer-report Lidl Q4 2024
+/customer-report REWE 2024-01-01 2024-12-31
+/customer-report "Deutsche Bahn" YTD
+/customer-report Lidl H1 2025
+/customer-report REWE last quarter
 ```
 
 ## Workflow
@@ -33,7 +50,43 @@ Generate comprehensive customer performance reports with REACH/HIRE split analys
 
 Parse $ARGUMENTS to extract:
 - `account_name`: Required - the customer name to search for
-- `months`: Optional - number of months (default: 12)
+- `timeframe`: Optional - time period specification (default: 12 months)
+
+**Timeframe Parsing Logic:**
+
+1. **Number only** (e.g., `6`, `12`, `24`):
+   - `start_date` = CURRENT_DATE - INTERVAL '{N} months'
+   - `end_date` = CURRENT_DATE
+
+2. **Date range** (e.g., `2024-06-01 2025-01-31`):
+   - `start_date` = first date
+   - `end_date` = second date
+
+3. **Month range** (e.g., `Jun2024 Jan2025`):
+   - Parse month abbreviations: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+   - `start_date` = first day of start month
+   - `end_date` = last day of end month
+
+4. **YTD** (Year to Date):
+   - `start_date` = January 1 of current year
+   - `end_date` = CURRENT_DATE
+
+5. **Quarter** (e.g., `Q1 2025`, `Q4 2024`):
+   - Q1: Jan 1 - Mar 31
+   - Q2: Apr 1 - Jun 30
+   - Q3: Jul 1 - Sep 30
+   - Q4: Oct 1 - Dec 31
+
+6. **Half year** (e.g., `H1 2025`, `H2 2024`):
+   - H1: Jan 1 - Jun 30
+   - H2: Jul 1 - Dec 31
+
+7. **Last quarter**:
+   - Calculate previous complete quarter from current date
+
+8. **Last year**:
+   - `start_date` = CURRENT_DATE - INTERVAL '12 months'
+   - `end_date` = CURRENT_DATE
 
 ### Step 2: Search for Account
 
@@ -43,7 +96,8 @@ Run this query to find the ultimate parent company name:
 SELECT DISTINCT ultimate_parent_company_name
 FROM rds.rep_job_metrics
 WHERE ultimate_parent_company_name ILIKE '%{account_name}%'
-  AND date_dt >= CURRENT_DATE - INTERVAL '{months} months'
+  AND date_dt >= '{start_date}'
+  AND date_dt <= '{end_date}'
 LIMIT 10
 ```
 
@@ -66,7 +120,8 @@ SELECT
     ) as avg_cpa_eur
 FROM rds.rep_job_metrics
 WHERE ultimate_parent_company_name = '{account_name}'
-  AND date_dt >= CURRENT_DATE - INTERVAL '{months} months'
+  AND date_dt >= '{start_date}'
+  AND date_dt <= '{end_date}'
   AND product_type IN ('Reach', 'Hire')
 GROUP BY product_type
 ORDER BY product_type
@@ -88,7 +143,8 @@ SELECT
     ) as cpa_eur
 FROM rds.rep_job_metrics
 WHERE ultimate_parent_company_name = '{account_name}'
-  AND date_dt >= CURRENT_DATE - INTERVAL '{months} months'
+  AND date_dt >= '{start_date}'
+  AND date_dt <= '{end_date}'
   AND product_type IN ('Reach', 'Hire')
 GROUP BY product_type, DATE_TRUNC('month', date_dt)
 ORDER BY product_type, month
@@ -110,7 +166,8 @@ SELECT
     ) as conversion_pct
 FROM rds.rep_job_metrics
 WHERE ultimate_parent_company_name = '{account_name}'
-  AND date_dt >= CURRENT_DATE - INTERVAL '{months} months'
+  AND date_dt >= '{start_date}'
+  AND date_dt <= '{end_date}'
   AND product_type IN ('Reach', 'Hire')
 GROUP BY product_type, DATE_TRUNC('month', date_dt)
 ORDER BY product_type, month
