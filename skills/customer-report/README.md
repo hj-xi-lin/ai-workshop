@@ -82,8 +82,7 @@ In Claude Code, use the skill with:
 
 | File | Description |
 |------|-------------|
-| `customer-report.md` | Skill description for Claude |
-| `customer-report-instructions.md` | SQL queries and implementation steps |
+| `SKILL.md` | Main skill file with instructions (Claude Code format) |
 | `customer_report_generator.py` | Python script for PowerPoint generation |
 | `Template.pptx` | HeyJobs PowerPoint template |
 | `install.sh` | One-click installation script |
@@ -93,19 +92,32 @@ In Claude Code, use the skill with:
 If the install script doesn't work, manually copy files:
 
 ```bash
-# Create skills directory
-mkdir -p ~/.claude/skills
+# Create skills directory with proper structure
+mkdir -p ~/.claude/skills/customer-report
 
 # Copy skill files
-cp customer-report.md ~/.claude/skills/
-cp customer-report-instructions.md ~/.claude/skills/
-cp customer_report_generator.py ~/.claude/skills/
+cp SKILL.md ~/.claude/skills/customer-report/
+cp customer_report_generator.py ~/.claude/skills/customer-report/
 
 # Copy template to Desktop
 cp Template.pptx ~/Desktop/
 
 # Install Python dependency
 pip3 install python-pptx
+```
+
+## 🎨 Integration with pptx Skill
+
+This skill integrates with Anthropic's `pptx` skill for enhanced PowerPoint capabilities:
+
+- **Template-based editing**: Use unpack/edit/pack workflow for advanced customization
+- **PptxGenJS**: Create presentations from scratch with JavaScript (requires Node.js)
+- **Design guidelines**: Follows pptx skill's design principles for professional output
+
+To install the pptx skill:
+```bash
+git clone https://github.com/anthropics/skills.git /tmp/anthropic-skills
+cp -r /tmp/anthropic-skills/skills/pptx ~/.claude/skills/
 ```
 
 ## 📤 Output
@@ -136,6 +148,10 @@ cp Template.pptx ~/Desktop/
 - Check the account name spelling
 - Verify you have Redshift MCP access
 - Try a partial name match (e.g., "Bahn" instead of "Deutsche Bahn")
+
+**"Unknown skill: customer-report"**
+- Ensure files are in `~/.claude/skills/customer-report/SKILL.md` (not directly in skills folder)
+- Restart Claude Code after installation
 
 ## 📞 Support
 
