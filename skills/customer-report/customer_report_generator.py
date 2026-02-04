@@ -180,6 +180,18 @@ def generate_report(data, template_path, output_path):
                 chart.series[i].format.line.width = Pt(2.5)
         return chart
 
+    def clear_placeholders(slide):
+        """Remove all placeholder text (like 'Click to add title') from a slide."""
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for para in shape.text_frame.paragraphs:
+                    if para.text.lower().startswith("click to add") or para.text.lower().startswith("klicken sie"):
+                        para.clear()
+                # Also clear any empty placeholder shapes
+                if not any(para.text.strip() for para in shape.text_frame.paragraphs):
+                    for para in shape.text_frame.paragraphs:
+                        para.clear()
+
     def format_number(num):
         """Format number with dots as thousand separators."""
         if num >= 1000000:
@@ -200,9 +212,7 @@ def generate_report(data, template_path, output_path):
     # SLIDE 1: Title Slide
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_TITLE)
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            shape.text_frame.clear()
+    clear_placeholders(slide)
 
     add_textbox(slide, 0.5, 1.8, 9, 0.8, f"{data['account_name']} Customer Report",
                 font_size=36, bold=True, color=RGBColor(0, 0, 0), align=PP_ALIGN.LEFT)
@@ -215,6 +225,7 @@ def generate_report(data, template_path, output_path):
     # SLIDE 2: Executive Summary (Minimalistic)
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_CONTENT)
+    clear_placeholders(slide)
 
     add_textbox(slide, 0.3, 0.2, 9, 0.5, "Performance Analyse im Überblick",
                 font_size=20, bold=True, color=RGBColor(255, 255, 255))
@@ -249,10 +260,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     # SLIDE 3: Section - Budget Overview
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_SECTION)
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            for para in shape.text_frame.paragraphs:
-                para.clear()
+    clear_placeholders(slide)
     add_textbox(slide, 0.5, 2.2, 9, 0.8, "1. Budget-Übersicht",
                 font_size=28, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.LEFT)
 
@@ -260,6 +268,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     # SLIDE 4: Budget Details by Product
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_CONTENT)
+    clear_placeholders(slide)
 
     add_textbox(slide, 0.3, 0.2, 9, 0.5, "Budget-Übersicht nach Produkt",
                 font_size=18, bold=True, color=RGBColor(255, 255, 255))
@@ -300,10 +309,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     # SLIDE 5: Section - REACH Performance
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_SECTION)
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            for para in shape.text_frame.paragraphs:
-                para.clear()
+    clear_placeholders(slide)
     add_textbox(slide, 0.5, 2.2, 9, 0.8, "2. REACH Performance",
                 font_size=28, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.LEFT)
 
@@ -312,6 +318,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     # ============================================================
     if reach['monthly_cpa']:
         slide = prs.slides.add_slide(LAYOUT_CONTENT)
+        clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "REACH: CPA Trending",
                     font_size=16, bold=True, color=RGBColor(255, 255, 255))
@@ -337,6 +344,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     # ============================================================
     if reach['monthly_apps']:
         slide = prs.slides.add_slide(LAYOUT_CONTENT)
+        clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "REACH: Bewerbungen Trending",
                     font_size=16, bold=True, color=RGBColor(255, 255, 255))
@@ -366,10 +374,7 @@ Bew. gesendet:
     # SLIDE 8: Section - HIRE Performance
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_SECTION)
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            for para in shape.text_frame.paragraphs:
-                para.clear()
+    clear_placeholders(slide)
     add_textbox(slide, 0.5, 2.2, 9, 0.8, "3. HIRE Performance",
                 font_size=28, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.LEFT)
 
@@ -378,6 +383,7 @@ Bew. gesendet:
     # ============================================================
     if hire['monthly_cpa']:
         slide = prs.slides.add_slide(LAYOUT_CONTENT)
+        clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "HIRE: CPA Trending",
                     font_size=16, bold=True, color=RGBColor(255, 255, 255))
@@ -403,6 +409,7 @@ Bew. gesendet:
     # ============================================================
     if hire['monthly_apps']:
         slide = prs.slides.add_slide(LAYOUT_CONTENT)
+        clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "HIRE: Bewerbungen Trending",
                     font_size=16, bold=True, color=RGBColor(255, 255, 255))
@@ -432,10 +439,7 @@ Bew. gesendet:
     # SLIDE 11: Section - Performance Summary
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_SECTION)
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            for para in shape.text_frame.paragraphs:
-                para.clear()
+    clear_placeholders(slide)
     add_textbox(slide, 0.5, 2.2, 9, 0.8, "4. Performance Zusammenfassung",
                 font_size=28, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.LEFT)
 
@@ -443,6 +447,7 @@ Bew. gesendet:
     # SLIDE 12: Performance Summary Dashboard (Minimalistic)
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_CONTENT)
+    clear_placeholders(slide)
 
     add_textbox(slide, 0.3, 0.2, 9, 0.5, "Gesamtperformance - REACH vs HIRE",
                 font_size=18, bold=True, color=RGBColor(255, 255, 255))
@@ -470,6 +475,7 @@ Bew. gesendet:
     # SLIDE 13: Closing Slide
     # ============================================================
     slide = prs.slides.add_slide(LAYOUT_CONTENT)
+    clear_placeholders(slide)
 
     add_textbox(slide, 0.5, 1.5, 9, 0.8, "Gemeinsam die Zukunft Ihres Recruitings gestalten",
                 font_size=24, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.CENTER)
