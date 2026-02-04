@@ -34,6 +34,7 @@ chmod +x install.sh
 ## 📋 Requirements
 
 - **Claude Code** CLI installed
+- **AWS SSO** access configured (run `aws sso login --profile redshift_mcp` before use)
 - **Redshift MCP plugin** configured with access to:
   - `rds.rep_job_metrics`
   - `rds.rep_accounting`
@@ -47,18 +48,43 @@ In Claude Code, use the skill with:
 # Basic usage (last 12 months)
 /customer-report REWE
 
-# Specify time range (last 6 months)
+# Specify number of months
 /customer-report "Deutsche Bahn" 6
 
-# Different account
-/customer-report Lidl 24
+# Specific date range
+/customer-report REWE 2024-01-01 2024-12-31
+
+# Year to date
+/customer-report Lidl YTD
+
+# Specific quarter
+/customer-report REWE Q4 2024
+
+# Half year
+/customer-report "Deutsche Bahn" H1 2025
+
+# Last quarter
+/customer-report Lidl last quarter
 ```
+
+**Supported Timeframe Formats:**
+
+| Format | Example | Description |
+|--------|---------|-------------|
+| Number | `12` | Last N months |
+| Date range | `2024-06-01 2025-01-31` | Specific start and end dates |
+| Month range | `Jun2024 Jan2025` | Month-year to month-year |
+| YTD | `YTD` | Year to date (Jan 1 to today) |
+| Quarter | `Q1 2025` or `Q4 2024` | Specific quarter |
+| Half year | `H1 2025` or `H2 2024` | First or second half of year |
+| Last quarter | `last quarter` | Previous complete quarter |
+| Last year | `last year` | Previous 12 months |
 
 **Parameters:**
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `account_name` | Yes | - | Customer name (partial match supported) |
-| `months` | No | 12 | Number of months to analyze |
+| `timeframe` | No | 12 months | Time period (see formats above) |
 
 ## 📑 Report Structure
 
@@ -76,7 +102,6 @@ In Claude Code, use the skill with:
 | 10 | HIRE Applications Trending (line chart) |
 | 11 | Section: Performance Summary |
 | 12 | Summary Dashboard (REACH vs HIRE side-by-side) |
-| 13 | Closing slide |
 
 ## 📁 Files Included
 
@@ -104,20 +129,6 @@ cp Template.pptx ~/Desktop/
 
 # Install Python dependency
 pip3 install python-pptx
-```
-
-## 🎨 Integration with pptx Skill
-
-This skill integrates with Anthropic's `pptx` skill for enhanced PowerPoint capabilities:
-
-- **Template-based editing**: Use unpack/edit/pack workflow for advanced customization
-- **PptxGenJS**: Create presentations from scratch with JavaScript (requires Node.js)
-- **Design guidelines**: Follows pptx skill's design principles for professional output
-
-To install the pptx skill:
-```bash
-git clone https://github.com/anthropics/skills.git /tmp/anthropic-skills
-cp -r /tmp/anthropic-skills/skills/pptx ~/.claude/skills/
 ```
 
 ## 📤 Output
@@ -152,6 +163,11 @@ cp Template.pptx ~/Desktop/
 **"Unknown skill: customer-report"**
 - Ensure files are in `~/.claude/skills/customer-report/SKILL.md` (not directly in skills folder)
 - Restart Claude Code after installation
+
+**"AWS credentials error"**
+```bash
+aws sso login --profile redshift_mcp
+```
 
 ## 📞 Support
 
