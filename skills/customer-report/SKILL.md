@@ -175,22 +175,44 @@ ORDER BY product_type, month
 
 ### Step 6: Query Budget Data
 
+**Note:** `booking_amount_eur` is only populated on the date when a booking is made, so we sum bookings within the reporting period to get booked budget. For remaining budget, we take the latest value per purchase (current state).
+
 ```sql
-SELECT
-    product_type,
-    SUM(remaining_total_credit_eur) as current_remaining_budget_eur
-FROM (
+WITH booked AS (
     SELECT
         product_type,
-        purchase_id,
-        remaining_total_credit_eur,
-        ROW_NUMBER() OVER (PARTITION BY purchase_id ORDER BY date DESC) as rn
+        SUM(booking_amount_eur) as total_booked_eur
     FROM rds.rep_accounting
     WHERE ultimate_parent_company_name = '{account_name}'
       AND product_type IN ('Reach', 'Hire')
+      AND booking_amount_eur > 0
+      AND date >= '{start_date}'
+      AND date <= '{end_date}'
+    GROUP BY product_type
+),
+remaining AS (
+    SELECT
+        product_type,
+        SUM(remaining_total_credit_eur) as remaining_budget_eur
+    FROM (
+        SELECT
+            product_type,
+            purchase_id,
+            remaining_total_credit_eur,
+            ROW_NUMBER() OVER (PARTITION BY purchase_id ORDER BY date DESC) as rn
+        FROM rds.rep_accounting
+        WHERE ultimate_parent_company_name = '{account_name}'
+          AND product_type IN ('Reach', 'Hire')
+    )
+    WHERE rn = 1
+    GROUP BY product_type
 )
-WHERE rn = 1
-GROUP BY product_type
+SELECT
+    COALESCE(b.product_type, r.product_type) as product_type,
+    COALESCE(b.total_booked_eur, 0) as booked_budget_eur,
+    COALESCE(r.remaining_budget_eur, 0) as remaining_budget_eur
+FROM booked b
+FULL OUTER JOIN remaining r ON b.product_type = r.product_type
 ORDER BY product_type
 ```
 
