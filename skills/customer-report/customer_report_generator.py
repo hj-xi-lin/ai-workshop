@@ -214,11 +214,11 @@ def generate_report(data, template_path, output_path):
     slide = prs.slides.add_slide(LAYOUT_TITLE)
     clear_placeholders(slide)
 
-    add_textbox(slide, 0.5, 1.8, 9, 0.8, f"{data['account_name']} Customer Report",
+    add_textbox(slide, 0.5, 1.6, 9, 1.0, f"{data['account_name']} Customer Report",
                 font_size=36, bold=True, color=RGBColor(0, 0, 0), align=PP_ALIGN.LEFT)
-    add_textbox(slide, 0.5, 2.6, 9, 0.6, "Ihre HeyJobs-Performance Analyse",
+    add_textbox(slide, 0.5, 2.8, 9, 0.6, "Ihre HeyJobs-Performance Analyse",
                 font_size=18, bold=False, color=HEYJOBS_DARK, align=PP_ALIGN.LEFT)
-    add_textbox(slide, 0.5, 3.2, 9, 0.5, f"Zeitraum: {data['date_from']} - {data['date_to']} ({data['time_range_months']} Monate)",
+    add_textbox(slide, 0.5, 3.5, 9, 0.5, f"Zeitraum: {data['date_from']} - {data['date_to']} ({data['time_range_months']} Monate)",
                 font_size=12, bold=False, color=HEYJOBS_GRAY, align=PP_ALIGN.LEFT)
 
     # ============================================================
@@ -228,7 +228,7 @@ def generate_report(data, template_path, output_path):
     clear_placeholders(slide)
 
     add_textbox(slide, 0.3, 0.2, 9, 0.5, "Performance Analyse im Überblick",
-                font_size=20, bold=True, color=RGBColor(255, 255, 255))
+                font_size=20, bold=True, color=RGBColor(0, 0, 0))
     add_textbox(slide, 0.3, 0.55, 9, 0.3, f"Letzte {data['time_range_months']} Monate (REACH + HIRE)",
                 font_size=10, bold=False, color=HEYJOBS_GRAY)
 
@@ -246,7 +246,7 @@ def generate_report(data, template_path, output_path):
 
     # Key insights
     add_textbox(slide, 0.3, 3.1, 9, 0.3, "REACH vs HIRE:",
-                font_size=11, bold=True, color=RGBColor(255, 255, 255))
+                font_size=11, bold=True, color=RGBColor(0, 0, 0))
 
     reach = data['reach']
     hire = data['hire']
@@ -271,7 +271,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     clear_placeholders(slide)
 
     add_textbox(slide, 0.3, 0.2, 9, 0.5, "Budget-Übersicht nach Produkt",
-                font_size=18, bold=True, color=RGBColor(255, 255, 255))
+                font_size=18, bold=True, color=RGBColor(0, 0, 0))
 
     # REACH Budget
     add_textbox(slide, 0.3, 0.7, 4.5, 0.3, "REACH", font_size=14, bold=True, color=HEYJOBS_PURPLE)
@@ -294,7 +294,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
     add_table(slide, 5.0, 1.0, 4.5, 1.6, hire_fin, header_color=LIGHT_ORANGE)
 
     # Performance comparison
-    add_textbox(slide, 0.3, 2.8, 9, 0.3, "Performance Vergleich", font_size=14, bold=True, color=RGBColor(255, 255, 255))
+    add_textbox(slide, 0.3, 2.8, 9, 0.3, "Performance Vergleich", font_size=14, bold=True, color=RGBColor(0, 0, 0))
     perf_compare = [
         ["Metrik", "REACH", "HIRE"],
         ["Jobs", format_number(reach['total_jobs']), format_number(hire['total_jobs'])],
@@ -321,7 +321,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
         clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "REACH: CPA Trending",
-                    font_size=16, bold=True, color=RGBColor(255, 255, 255))
+                    font_size=16, bold=True, color=RGBColor(0, 0, 0))
 
         # Average CPA badge
         shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.8), Inches(0.1), Inches(1.8), Inches(0.45))
@@ -347,7 +347,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
         clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "REACH: Bewerbungen Trending",
-                    font_size=16, bold=True, color=RGBColor(255, 255, 255))
+                    font_size=16, bold=True, color=RGBColor(0, 0, 0))
 
         categories = [m[0] for m in reach['monthly_apps']]
         starts = tuple(m[1]/1000 for m in reach['monthly_apps'])
@@ -359,7 +359,7 @@ HIRE: {format_number(hire['total_jobs'])} Jobs  |  CPA €{hire['avg_cpa']:.2f} 
 
         # Summary stats
         add_textbox(slide, 7.0, 0.6, 2.8, 0.35, "REACH Summen",
-                    font_size=12, bold=True, color=RGBColor(255, 255, 255))
+                    font_size=12, bold=True, color=RGBColor(0, 0, 0))
         stats_text = f"""Bew. gestartet:
 {format_number(reach['applications_started'])}
 
@@ -386,7 +386,7 @@ Bew. gesendet:
         clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "HIRE: CPA Trending",
-                    font_size=16, bold=True, color=RGBColor(255, 255, 255))
+                    font_size=16, bold=True, color=RGBColor(0, 0, 0))
 
         # Average CPA badge
         shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.8), Inches(0.1), Inches(1.8), Inches(0.45))
@@ -412,7 +412,7 @@ Bew. gesendet:
         clear_placeholders(slide)
 
         add_textbox(slide, 0.3, 0.15, 7, 0.4, "HIRE: Bewerbungen Trending",
-                    font_size=16, bold=True, color=RGBColor(255, 255, 255))
+                    font_size=16, bold=True, color=RGBColor(0, 0, 0))
 
         categories = [m[0] for m in hire['monthly_apps']]
         starts = tuple(m[1]/1000 for m in hire['monthly_apps'])
@@ -424,7 +424,7 @@ Bew. gesendet:
 
         # Summary stats
         add_textbox(slide, 7.0, 0.6, 2.8, 0.35, "HIRE Summen",
-                    font_size=12, bold=True, color=RGBColor(255, 255, 255))
+                    font_size=12, bold=True, color=RGBColor(0, 0, 0))
         stats_text = f"""Bew. gestartet:
 {format_number(hire['applications_started'])}
 
@@ -450,7 +450,7 @@ Bew. gesendet:
     clear_placeholders(slide)
 
     add_textbox(slide, 0.3, 0.2, 9, 0.5, "Gesamtperformance - REACH vs HIRE",
-                font_size=18, bold=True, color=RGBColor(255, 255, 255))
+                font_size=18, bold=True, color=RGBColor(0, 0, 0))
 
     # REACH KPIs
     add_textbox(slide, 0.3, 0.6, 4.6, 0.3, "REACH", font_size=13, bold=True, color=LIGHT_PURPLE)
@@ -470,19 +470,6 @@ Bew. gesendet:
     add_textbox(slide, 0.3, 3.1, 9.4, 0.3,
                 f"Zeitraum: {data['date_from']} - {data['date_to']} | Account: {data['account_name']}",
                 font_size=8, bold=False, color=HEYJOBS_GRAY, align=PP_ALIGN.CENTER)
-
-    # ============================================================
-    # SLIDE 13: Closing Slide
-    # ============================================================
-    slide = prs.slides.add_slide(LAYOUT_CONTENT)
-    clear_placeholders(slide)
-
-    add_textbox(slide, 0.5, 1.5, 9, 0.8, "Gemeinsam die Zukunft Ihres Recruitings gestalten",
-                font_size=24, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.CENTER)
-    add_textbox(slide, 0.5, 2.5, 9, 0.5, "Einfach. Erfolgreich. Einstellen.",
-                font_size=16, bold=False, color=HEYJOBS_GRAY, align=PP_ALIGN.CENTER)
-    add_textbox(slide, 0.5, 3.5, 9, 0.3, "Vielen Dank!",
-                font_size=20, bold=True, color=RGBColor(255, 255, 255), align=PP_ALIGN.CENTER)
 
     # Save presentation
     prs.save(output_path)

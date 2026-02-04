@@ -167,8 +167,8 @@ Create a JSON file with this structure:
         "applications_sent": 101245,
         "avg_cpa": 9.19,
         "conversion_rate": 34.6,
-        "monthly_cpa": [["Feb", 9.25, 6830], ["Mar", 11.23, 6950]],
-        "monthly_apps": [["Feb", 26502, 8213], ["Mar", 20753, 7286]]
+        "monthly_cpa": [["02/25", 9.25, 6830], ["04/25", 11.23, 6950], ["06/25", 8.50, 7200]],
+        "monthly_apps": [["02/25", 26502, 8213], ["04/25", 20753, 7286], ["06/25", 22100, 7500]]
     },
     "hire": {
         "booked_budget": 389479,
@@ -180,8 +180,8 @@ Create a JSON file with this structure:
         "applications_sent": 8278,
         "avg_cpa": 48.46,
         "conversion_rate": 15.1,
-        "monthly_cpa": [["Feb", 65.14, 87], ["Mar", 51.44, 75]],
-        "monthly_apps": [["Feb", 3809, 565], ["Mar", 3178, 676]]
+        "monthly_cpa": [["02/25", 65.14, 87], ["04/25", 51.44, 75], ["06/25", 55.00, 80]],
+        "monthly_apps": [["02/25", 3809, 565], ["04/25", 3178, 676], ["06/25", 3500, 620]]
     }
 }
 ```
@@ -230,7 +230,6 @@ Tell the user where the report was saved and provide a summary of the key metric
 10. **HIRE Applications Chart** - Line chart with applications started/sent
 11. **Section: Performance Summary**
 12. **Summary Dashboard** - Side-by-side KPI comparison
-13. **Closing Slide** - Thank you message
 
 ## Design Guidelines
 
@@ -255,10 +254,15 @@ Following the pptx skill's design principles:
 - **Commit to a visual motif** - Rounded KPI boxes with pastel backgrounds
 - **Charts should be clean** - Subtle gridlines, modern styling
 
-## Month Labels
+## Chart X-Axis Labels
 
-Use German 3-letter month abbreviations:
-- Jan, Feb, Mär, Apr, Mai, Jun, Jul, Aug, Sep, Okt, Nov, Dez
+For better readability on charts:
+- Use `MM/YY` format (e.g., "02/25", "04/25", "06/25")
+- Show every other month to reduce clutter (e.g., Feb, Apr, Jun, Aug, Oct, Dec)
+- Always include the year to distinguish between years (e.g., "02/25" vs "02/26")
+- For 12-month reports: ~7 data points
+- For 6-month reports: ~4 data points
+- For 24-month reports: ~12 data points
 
 ## Requirements
 
